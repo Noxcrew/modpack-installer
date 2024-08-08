@@ -1,40 +1,36 @@
 {
-  "private": true,
-  "scripts": {
-    "dev": "next",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
-    "type-check": "tsc"
-  },
-  "dependencies": {
-    "buffer": "^6.0.3",
-    "clsx": "^1.2.1",
-    "file-saver": "^2.0.5",
-    "jszip": "^3.10.1",
-    "mobx": "^6.7.0",
-    "mobx-react-lite": "^3.4.0",
-    "next": "13.0.6",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
-  },
-  "devDependencies": {
-    "@svgr/webpack": "^6.5.1",
-    "@types/file-saver": "^2.0.5",
-    "@types/node": "^18.11.10",
-    "@types/react": "^18.0.25",
-    "@types/react-dom": "^18.0.9",
-    "@types/wicg-file-system-access": "^2020.9.5",
-    "@typescript-eslint/eslint-plugin": "^5.45.0",
-    "@typescript-eslint/parser": "^5.45.0",
-    "autoprefixer": "^10.4.13",
-    "eslint": "^8.28.0",
-    "eslint-config-next": "^13.0.6",
-    "eslint-config-prettier": "^8.5.0",
-    "eslint-plugin-prettier": "^4.2.1",
-    "postcss": "^8.4.19",
-    "prettier": "^2.8.0",
-    "tailwindcss": "^3.2.4",
-    "typescript": "4.9.3"
-  }
+    "private": true,
+    "scripts": {
+        "dev": "next",
+        "build": "next build",
+        "start": "next start",
+        "type-check": "tsc",
+        "format": "biome check --write",
+        "check": "biome check"
+    },
+    "dependencies": {
+        "buffer": "^6.0.3",
+        "clsx": "^1.2.1",
+        "file-saver": "^2.0.5",
+        "jszip": "^3.10.1",
+        "mobx": "^6.7.0",
+        "mobx-react-lite": "^3.4.0",
+        "next": "13.0.6",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0"
+    },
+    "devDependencies": {
+        "@biomejs/biome": "1.8.3",
+        "@svgr/webpack": "^6.5.1",
+        "@types/file-saver": "^2.0.5",
+        "@types/node": "^18.11.10",
+        "@types/react": "^18.0.25",
+        "@types/react-dom": "^18.0.9",
+        "@types/wicg-file-system-access": "^2020.9.5",
+        "autoprefixer": "^10.4.13",
+        "postcss": "^8.4.19",
+        "prettier": "^2.8.0",
+        "tailwindcss": "^3.2.4",
+        "typescript": "4.9.3"
+    }
 }

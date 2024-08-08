@@ -1,12 +1,12 @@
-import { useEffect } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/router"
+import { useEffect } from "react"
 
 export default function NotFound() {
-  const router = useRouter();
+    const router = useRouter()
 
-  useEffect(() => {
-    router.push("https://noxcrew.com");
-  }, [router]);
+    useEffect(() => {
+        router.push("https://noxcrew.com")
+    }, [router])
 
-  return null;
+    return null
 }
