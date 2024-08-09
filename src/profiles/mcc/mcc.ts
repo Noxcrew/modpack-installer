@@ -100,4 +100,3 @@ export const mccProfile: Profile = {
         },
     ],
 }
-
