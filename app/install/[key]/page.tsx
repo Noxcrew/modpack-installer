@@ -17,7 +17,7 @@ export function generateMetadata(
 
     return {
         title: "One-Click Installer",
-        description: `Get ready for ${profile.name} within a few clicks with out online mod installer.`,
+        description: `Get ready for ${profile.name} within a few clicks with our online mod installer.`,
     }
 }
 
