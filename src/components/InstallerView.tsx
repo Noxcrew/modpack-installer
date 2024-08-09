@@ -1,3 +1,5 @@
+"use client"
+
 import clsx from "clsx"
 import { observer } from "mobx-react-lite"
 import type { DragEvent } from "react"

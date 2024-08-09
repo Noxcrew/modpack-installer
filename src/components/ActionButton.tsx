@@ -14,7 +14,7 @@ export default function ActionButton(props: ActionButtonProps) {
     const button = (
         <button
             type="button"
-            className="bg-green-500/20 py-2 font-semibold text-green-500 rounded-lg border-2 border-transparent hover:border-green-500 transition-colors"
+            className="bg-green-500/20 py-2 font-semibold text-green-500 rounded-lg border-2 border-transparent hover:border-green-500 transition-colors w-full"
             onClick={onClick}
             disabled={disabled}
         >

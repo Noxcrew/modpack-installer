@@ -1,3 +1,5 @@
+"use client"
+
 import { observer } from "mobx-react-lite"
 import Link from "next/link"
 import type { ReactNode } from "react"

@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+body {
+  background-color: #171717;
+}
+
 /* Firefox */
 * {
   scrollbar-width: thin;
