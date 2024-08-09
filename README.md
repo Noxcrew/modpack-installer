@@ -4,6 +4,8 @@
 
 <p align="center">Download and install Minecraft profiles in one click.</p>
 
+<p align="center">Originally made by <a href="https://twitter.com/cubxity">@cubxity</a> and <a href="https://twitter.com/vini2003_dev">@vini2003_dev</a>.</p>
+
 ## Usage
 
 We welcome others deploying instances to host their own mod profiles.
