@@ -1,7 +1,7 @@
 import clsx from "clsx"
 import { observer } from "mobx-react-lite"
 
-import InformationCircleIcon from "../../assets/icon/information_circle.svg"
+import InformationCircleIcon from "@/assets/icon/information_circle.svg"
 import { useInstaller } from "../context"
 import type { InstallerModState } from "../installer/installer"
 

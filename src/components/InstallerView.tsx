@@ -3,8 +3,8 @@ import { observer } from "mobx-react-lite"
 import type { DragEvent } from "react"
 import { useEffect, useState } from "react"
 
-import DoneIllustration from "../../assets/illustration/done.svg"
-import QuestionsIllustration from "../../assets/illustration/questions.svg"
+import DoneIllustration from "@/assets/illustration/done.svg"
+import QuestionsIllustration from "@/assets/illustration/questions.svg"
 import { useInstaller } from "../context"
 
 import InstallerFooter from "./InstallerFooter"

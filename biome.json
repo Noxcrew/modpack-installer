@@ -54,5 +54,8 @@
         "parser": {
             "unsafeParameterDecoratorsEnabled": true
         }
+    },
+    "files": {
+        "maxSize": 50000000
     }
 }

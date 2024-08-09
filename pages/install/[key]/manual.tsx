@@ -2,17 +2,14 @@ import type { GetStaticPaths, GetStaticProps } from "next"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 
-import ContentCopyIcon from "../../../assets/icon/content_copy.svg"
-import FileDownloadIcon from "../../../assets/icon/file_download.svg"
-import CardButton from "../../../src/components/CardButton"
-import SEO from "../../../src/components/SEO"
-import type { Profile, ProfileServer } from "../../../src/profile"
-import {
-    getProfileByKey,
-    getStaticProfilePaths,
-} from "../../../src/profile.server"
-import { archiveProfile } from "../../../src/util/archiver"
-import { getSystemMinecraftPath } from "../../../src/util/platform"
+import ContentCopyIcon from "@/assets/icon/content_copy.svg"
+import FileDownloadIcon from "@/assets/icon/file_download.svg"
+import CardButton from "@/src/components/CardButton"
+import SEO from "@/src/components/SEO"
+import type { Profile, ProfileServer } from "@/src/profile"
+import { getProfileByKey, getStaticProfilePaths } from "@/src/profile.server"
+import { archiveProfile } from "@/src/util/archiver"
+import { getSystemMinecraftPath } from "@/src/util/platform"
 
 interface ManualPageProps {
     profile: Profile

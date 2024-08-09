@@ -1,13 +1,10 @@
 import type { GetStaticPaths, GetStaticProps } from "next"
 
-import InstallerProvider from "../../../src/components/InstallerProvider"
-import InstallerView from "../../../src/components/InstallerView"
-import SEO from "../../../src/components/SEO"
-import type { Profile } from "../../../src/profile"
-import {
-    getProfileByKey,
-    getStaticProfilePaths,
-} from "../../../src/profile.server"
+import InstallerProvider from "@/src/components/InstallerProvider"
+import InstallerView from "@/src/components/InstallerView"
+import SEO from "@/src/components/SEO"
+import type { Profile } from "@/src/profile"
+import { getProfileByKey, getStaticProfilePaths } from "@/src/profile.server"
 
 export interface InstallPageProps {
     profile: Profile
@@ -30,7 +27,7 @@ export default function InstallPage({
 }
 
 export const getStaticProps: GetStaticProps = (context) => {
-    const key = context.params["key"] as string
+    const key = context.params.key as string
     const profile = getProfileByKey(key)
 
     if (!profile) {
