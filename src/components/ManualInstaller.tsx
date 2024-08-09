@@ -31,7 +31,7 @@ export function ManualInstaller({ profile }: ManualPageProps) {
                 {profile.mods.length !== 0 && <ModsInstructions />}
                 <li>
                     Open the Minecraft Launcher and launch the installed profile
-                    called <b>(innit.gg) {profile.name}</b>
+                    called <b>{profile.name}</b>
                 </li>
                 {profile.servers.length !== 0 && (
                     <li>

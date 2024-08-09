@@ -102,7 +102,7 @@ export class InstallerUI {
         const dump = JSON.stringify(this.installer.createDump())
         const time = new Date().toISOString()
 
-        saveAs(new Blob([dump]), `innit-installer-${time}.json`)
+        saveAs(new Blob([dump]), `nox-installer-${time}.json`)
     }
 
     async install() {

@@ -22,7 +22,7 @@ export const installFabric = async (installer: Installer): Promise<void> => {
         )
         .then((res) => res.json())
 
-    const id = `innit-${installer.profile.id}`
+    const id = `nox-${installer.profile.id}`
 
     const manifest = {
         id: id,

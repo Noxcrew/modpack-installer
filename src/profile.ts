@@ -8,7 +8,9 @@ export interface Profile {
     readonly key: string
     readonly id: string
     readonly name: string
+    readonly icon: string
     readonly version: ProfileVersion
+    readonly javaArgs?: string
     readonly servers: ProfileServer[]
     readonly mods: ProfileMod[]
     readonly files?: Record<string, string>

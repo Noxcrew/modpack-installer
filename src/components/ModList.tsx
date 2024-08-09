@@ -93,6 +93,7 @@ type ModIndex = Record<string, InstallerModState[]>
 
 export default observer(function ModList({ progress }: ModListProps) {
     const { installer } = useInstaller()
+    const loader = installer.profile.version.loader
 
     const modIndex: ModIndex = installer.mods
         .slice()
@@ -120,6 +121,22 @@ export default observer(function ModList({ progress }: ModListProps) {
                 Mods
             </h2>
             <div className="grow list-none overflow-y-scroll">
+                <div key="loader">
+                    <div className="sticky top-0 bg-neutral-800/80 px-4 py-2 text-xs text-white font-semibold uppercase z-10">
+                        Minecraft
+                    </div>
+
+                    <li className="px-4 py-3 flex flex-row items-center">
+                        <h3 className="text-neutral-200 grow relative group">
+                            {loader
+                                ? loader.charAt(0).toUpperCase() +
+                                  loader.slice(1)
+                                : "Vanilla"}{" "}
+                            {installer.profile.version.minecraft}
+                        </h3>
+                    </li>
+                </div>
+
                 {Object.entries(modIndex).map(([category, mods]) => (
                     <div key={category}>
                         <div className="sticky top-0 bg-neutral-800/80 px-4 py-2 text-xs text-white font-semibold uppercase z-10">

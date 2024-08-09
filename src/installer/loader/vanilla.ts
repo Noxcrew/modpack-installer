@@ -1,7 +1,7 @@
 import type { Installer } from "../installer"
 
 export const installVanilla = async (installer: Installer): Promise<void> => {
-    const id = `innit-${installer.profile.id}`
+    const id = `nox-${installer.profile.id}`
 
     const manifest = {
         id: id,
@@ -26,7 +26,7 @@ export const writeManifest = async (
         },
     )
 
-    const id = `innit-${installer.profile.id}`
+    const id = `nox-${installer.profile.id}`
     const loaderVersionHandle = await versionsHandle.getDirectoryHandle(id, {
         create: true,
     })

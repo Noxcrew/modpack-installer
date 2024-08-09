@@ -5,10 +5,12 @@ export const mccProfile: Profile = {
     key: "6c76b98d1fe1a8d56ddf89dab61c35aff0b4cc4bc914075479f24a87e5604246",
     id: "mcc",
     name: "MC Championship",
+    icon: "/assets/logo/logo.png",
     version: {
         loader: "fabric",
         minecraft: "1.21",
     },
+    javaArgs: "-Xmx4G -XX:+UseZGC -XX:+ZGenerational",
     servers: [
         {
             name: "MCC Island",

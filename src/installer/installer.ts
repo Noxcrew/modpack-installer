@@ -79,7 +79,7 @@ export class Installer {
         this.progress.setMax(5 + modCount)
 
         try {
-            const id = `innit-${this.profile.id}`
+            const id = `nox-${this.profile.id}`
             const instanceHandle = await this.handle.getDirectoryHandle(id, {
                 create: true,
             })
@@ -234,7 +234,7 @@ export class Installer {
                 await serversWritable.close()
             }
 
-            const logoBlob = await this.fetchWithRetry("/assets/logo/32x.png")
+            const logoBlob = await this.fetchWithRetry(this.profile.icon)
                 .then((res) => res.arrayBuffer())
                 .then(
                     (buf) =>
@@ -254,8 +254,11 @@ export class Installer {
                 icon: logoBlob ?? "Furnace",
                 lastUsed: isoTime,
                 lastVersionId: id,
-                name: `(innit.gg) ${this.profile.name}`,
+                name: this.profile.name,
                 type: "custom",
+                javaArgs:
+                    this.profile.javaArgs ??
+                    "-Xmx2G -XX:+UseZGC -XX:+ZGenerational",
             }
             const writable = await profilesHandle.createWritable()
             try {
