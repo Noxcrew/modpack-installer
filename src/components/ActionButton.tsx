@@ -1,16 +1,18 @@
 import Link from "next/link"
-import type { ReactNode } from "react"
+import type { PropsWithChildren } from "react"
 
-export interface ActionButtonProps {
-    children: ReactNode
+interface Props extends PropsWithChildren {
     onClick?: () => void
     href?: string
     disabled?: boolean
 }
 
-export default function ActionButton(props: ActionButtonProps) {
-    const { children, onClick, href, disabled } = props
-
+export default function ActionButton({
+    children,
+    onClick,
+    href,
+    disabled,
+}: Props) {
     const button = (
         <button
             type="button"

@@ -3,6 +3,7 @@ import JSZip from "jszip"
 
 import type { Profile } from "../profile"
 
+/** Archives the profile's mods for download. */
 export const archiveProfile = async (profile: Profile) => {
     const zip = new JSZip()
     for (const mod of profile.mods) {

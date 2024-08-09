@@ -3,19 +3,38 @@ import { makeAutoObservable } from "mobx"
 
 import type { Installer } from "./installer"
 
+/** The current state of the installation, as represented in the UI. */
 export type InstallerUIStage =
     | "onboarding"
     | "fileaccess"
     | "install"
     | "complete"
 
+/** Manages the lifecycle of the installation UI. */
 export class InstallerUI {
     readonly installer: Installer
-    stage: InstallerUIStage = "onboarding"
-    alert?: string = undefined
-    isCompatible?: boolean = undefined
 
-    get isComplete(): boolean {
+    private _stage: InstallerUIStage = "onboarding"
+    private _alert?: string = undefined
+    private _isCompatible?: boolean = undefined
+
+    /** The current installation stage. */
+    get stage() {
+        return this._stage
+    }
+
+    /** An alert to highlight. */
+    get alert() {
+        return this._alert
+    }
+
+    /** Whether the user's environment is compatible with the `FileSystemHandle` API. */
+    get isCompatible() {
+        return this._isCompatible
+    }
+
+    /** Whether the installation is complete. */
+    get isComplete() {
         return this.stage === "complete"
     }
 
@@ -24,22 +43,25 @@ export class InstallerUI {
         makeAutoObservable(this)
     }
 
+    /** Sets the current installation stage. */
     setStage(stage: InstallerUIStage, clearAlert = true) {
-        this.stage = stage
+        this._stage = stage
         if (clearAlert) {
             this.setAlert(undefined)
         }
     }
 
+    /** Sets the current alert. */
     setAlert(alert?: string) {
-        this.alert = alert
+        this._alert = alert
     }
 
+    /** Checks for `FileSystemHandle` compatibility in the user's environment. */
     checkCompatibility() {
-        this.isCompatible = "FileSystemHandle" in window
+        this._isCompatible = "FileSystemHandle" in window
 
         if (navigator.userAgent.indexOf("Firefox") > -1) {
-            this.isCompatible = false
+            this._isCompatible = false
         }
 
         if (!this.isCompatible) {
@@ -49,16 +71,17 @@ export class InstallerUI {
         }
     }
 
+    /** Proceeds to the next UI stage. */
     proceed(clearAlert = true) {
         switch (this.stage) {
             case "onboarding":
-                this.stage = "fileaccess"
+                this._stage = "fileaccess"
                 break
             case "fileaccess":
-                this.stage = "install"
+                this._stage = "install"
                 break
             case "install":
-                this.stage = "complete"
+                this._stage = "complete"
                 break
         }
         if (clearAlert) {
@@ -66,6 +89,7 @@ export class InstallerUI {
         }
     }
 
+    /** Handles the dropping of a file/directory on the page's viewport. */
     async handleDrop(handle: FileSystemHandle): Promise<void> {
         try {
             if (handle.kind !== "directory") {
@@ -98,6 +122,7 @@ export class InstallerUI {
         }
     }
 
+    /** Handles the creation of a dump file. */
     handleDump() {
         const dump = JSON.stringify(this.installer.createDump())
         const time = new Date().toISOString()
@@ -105,6 +130,7 @@ export class InstallerUI {
         saveAs(new Blob([dump]), `nox-installer-${time}.json`)
     }
 
+    /** Attempts to install the profile. */
     async install() {
         try {
             await this.installer.install()

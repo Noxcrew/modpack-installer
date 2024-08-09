@@ -2,9 +2,10 @@ import { Buffer } from "buffer"
 
 import type { Profile } from "../profile"
 
+/** Creates the `servers.dat` NBT file. */
 export const createServersNBT = (profile: Profile): Buffer => {
     const size = computeServersNBTSize(profile)
-    const buffer = new Buffer(size)
+    const buffer = Buffer.alloc(size)
 
     buffer.writeUInt8(0x0a, 0) // TAG_Compound
     buffer.writeUInt16BE(0, 1) // Name size
@@ -42,6 +43,7 @@ export const createServersNBT = (profile: Profile): Buffer => {
     return buffer
 }
 
+/** Computes the required size for the `servers.dat` file. */
 const computeServersNBTSize = (profile: Profile): number => {
     let size = 19 // TAG_Compound (3) + TAG_List (15) + ... + TAG_End (1)
     for (const server of profile.servers) {
@@ -54,6 +56,7 @@ const computeServersNBTSize = (profile: Profile): number => {
     return size
 }
 
+/** Computes the bytes required to store `str` in UTF8 format. */
 const computeUTF8Size = (str: string): number => {
     let size = str.length
     for (let i = str.length - 1; i >= 0; i--) {

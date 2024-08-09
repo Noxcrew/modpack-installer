@@ -1,6 +1,6 @@
 "use client"
 
-import type { ReactNode } from "react"
+import type { PropsWithChildren } from "react"
 import { useEffect } from "react"
 
 import type { InstallerContextProps } from "../context"
@@ -9,15 +9,11 @@ import { Installer } from "../installer/installer"
 import { InstallerUI } from "../installer/ui"
 import type { Profile } from "../profile"
 
-export interface InstallerProviderProps {
+export interface Props extends PropsWithChildren {
     initialProfile?: Profile
-    children: ReactNode
 }
 
-export default function InstallerProvider({
-    initialProfile,
-    children,
-}: InstallerProviderProps) {
+export default function InstallerProvider({ initialProfile, children }: Props) {
     const installer = new Installer(initialProfile)
     const ui = new InstallerUI(installer)
 

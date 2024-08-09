@@ -1,17 +1,14 @@
 "use client"
 
-import type { ReactNode } from "react"
+import type { PropsWithChildren, ReactNode } from "react"
 import { useState } from "react"
 
-export interface CardButtonProps {
-    children: ReactNode
+interface Props extends PropsWithChildren {
     icon?: ReactNode
     onClick?: () => void | Promise<void>
 }
 
-export default function CardButton(props: CardButtonProps) {
-    const { children, icon, onClick } = props
-
+export default function CardButton({ children, icon, onClick }: Props) {
     const [loading, setLoading] = useState(false)
 
     const handleClick = async () => {

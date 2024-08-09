@@ -2,73 +2,13 @@
 
 import { observer } from "mobx-react-lite"
 import Link from "next/link"
-import type { ReactNode } from "react"
 import { useEffect, useState } from "react"
 
 import { useInstaller } from "../context"
 import { getSystemMinecraftPath } from "../util/platform"
 
 import ActionButton from "./ActionButton"
-
-interface CardLayoutProps {
-    title: string
-    description: ReactNode
-    showProgress?: boolean
-    children?: ReactNode
-}
-
-const AlertView = observer(() => {
-    const { ui } = useInstaller()
-
-    return (
-        <>
-            {ui.alert && (
-                <div className="bg-red-500/20 rounded-lg p-4 my-4">
-                    <p className="text-red-500 font-semibold">{ui.alert}</p>
-                </div>
-            )}
-        </>
-    )
-})
-
-const ProgressView = observer(() => {
-    const {
-        installer: { progress },
-    } = useInstaller()
-
-    return (
-        <>
-            {progress.display && (
-                <h4 className="text-neutral-300 font-semibold mb-2">
-                    {progress.display}
-                </h4>
-            )}
-            {progress.progress !== undefined && (
-                <div className="w-full bg-green-500/20 rounded-full h-2.5">
-                    <div
-                        className="bg-green-500 h-2.5 rounded-full"
-                        style={{ width: `${progress.progress * 100}%` }}
-                    />
-                </div>
-            )}
-        </>
-    )
-})
-
-const CardLayout = (props: CardLayoutProps) => {
-    const { title, description, showProgress, children } = props
-
-    return (
-        <>
-            <h1 className="text-3xl text-white font-bold">{title}</h1>
-            <p className="text-lg text-neutral-400 mt-4">{description}</p>
-            <div className="grow" />
-            <AlertView />
-            {showProgress && <ProgressView />}
-            {children}
-        </>
-    )
-}
+import { CardLayout } from "./installer/CardLayout"
 
 export default observer(function InstallerPanel() {
     const { installer, ui } = useInstaller()

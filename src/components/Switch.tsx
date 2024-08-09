@@ -1,12 +1,12 @@
 import clsx from "clsx"
 
-export interface SwitchProps {
+export interface Props {
     value: boolean
     onChange?: () => void
     disabled?: boolean
 }
 
-export default function Switch({ value, onChange, disabled }: SwitchProps) {
+export default function Switch({ value, onChange, disabled }: Props) {
     return (
         <label
             className={clsx(

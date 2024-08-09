@@ -2,17 +2,17 @@
 
 import ContentCopyIcon from "@/assets/icon/content_copy.svg"
 import FileDownloadIcon from "@/assets/icon/file_download.svg"
-import { useEffect, useState } from "react"
 import { Profile, ProfileServer } from "../profile"
 import { archiveProfile } from "../util/archiver"
-import { getSystemMinecraftPath } from "../util/platform"
 import CardButton from "./CardButton"
+import { FabricInstructions } from "./installer/FabricInstructions"
+import { ModsInstructions } from "./installer/ModsInstructions"
 
-interface ManualPageProps {
+export interface ManualInstallerProps {
     profile: Profile
 }
 
-export function ManualInstaller({ profile }: ManualPageProps) {
+export function ManualInstaller({ profile }: ManualInstallerProps) {
     const handleCopyServer = async (server: ProfileServer) => {
         await navigator.clipboard.writeText(server.host)
     }
@@ -71,62 +71,5 @@ export function ManualInstaller({ profile }: ManualPageProps) {
                 ))}
             </div>
         </div>
-    )
-}
-
-const FabricInstructions = ({ profile }: ManualPageProps) => {
-    return (
-        <>
-            <li>
-                Download the Fabric installer from&nbsp;
-                <a
-                    className="text-blue-400"
-                    rel="noreferrer"
-                    target="_blank"
-                    href="https://fabricmc.net/use/installer/"
-                >
-                    here
-                </a>
-            </li>
-            <li>
-                Run the installer and install Fabric for{" "}
-                <b>Minecraft {profile.version.minecraft}</b>
-            </li>
-        </>
-    )
-}
-
-const ModsInstructions = () => {
-    // Assume Windows by default, since most users use Windows (sadly)
-    const [path, setPath] = useState<string | undefined>()
-
-    useEffect(() => {
-        if (!navigator.platform.toLowerCase().includes("win")) {
-            setPath(getSystemMinecraftPath())
-        }
-    }, [])
-
-    return (
-        <>
-            <li>
-                {path ? (
-                    <>
-                        Navigate to <b>{path}</b>
-                    </>
-                ) : (
-                    <>
-                        Press Win + R, type <b>%appdata%\.minecraft</b>
-                    </>
-                )}
-                , and create an empty folder called <b>mods</b>{" "}
-                <b className="text-yellow-200 ml-2">
-                    ⚠️ If there is an existing one, clear it!
-                </b>
-            </li>
-            <li>
-                Download the mods and extract the contents of <b>mods.zip</b>{" "}
-                into the mods folder
-            </li>
-        </>
     )
 }

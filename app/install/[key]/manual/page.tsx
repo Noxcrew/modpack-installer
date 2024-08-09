@@ -14,7 +14,7 @@ export function generateMetadata(
     }
 
     return {
-        title: "Manual Installer",
+        title: "Manual Installation Guide",
         description: `Get ready for ${profile.name} within a few clicks with out online mod installer.`,
     }
 }

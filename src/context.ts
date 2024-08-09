@@ -12,6 +12,7 @@ export const InstallerContext = createContext<
     InstallerContextProps | undefined
 >(undefined)
 
+/** Provides access to the `InstallerContext`. */
 export const useInstaller = (): InstallerContextProps => {
     const context = useContext(InstallerContext)
     if (!context) throw new Error("No installer context found")

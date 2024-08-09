@@ -1,74 +1,59 @@
 import { makeAutoObservable } from "mobx"
 
-import type { Profile, ProfileMod } from "../profile"
+import type { Profile } from "../profile"
 
 import { installFabric } from "./loader/fabric"
 import { installVanilla } from "./loader/vanilla"
 import { Logger } from "./logger"
 import { createServersNBT } from "./nbt"
+import { InstallerComponentState, InstallerProgress } from "./progress"
+import { InstallerModState } from "./state"
 
-export type InstallerComponentState =
-    | "pending"
-    | "installing"
-    | "installed"
-    | "failed"
-
-export class InstallerProgress {
-    display = "Idle"
-    value = 0
-    max = 1
-
-    get progress(): number {
-        return this.value / this.max
-    }
-
-    constructor() {
-        makeAutoObservable(this)
-    }
-
-    setDisplay(display: string) {
-        this.display = display
-    }
-
-    setValue(value: number) {
-        this.value = value
-    }
-
-    setMax(max: number) {
-        this.max = max
-    }
-
-    increment() {
-        this.value++
-    }
-}
-
+/** Manages the lifecycle of a certain profile's installation. */
 export class Installer {
-    state: InstallerComponentState = "pending"
-    readonly progress: InstallerProgress = new InstallerProgress()
-    readonly logger: Logger = new Logger()
+    private _state: InstallerComponentState = "pending"
+    private _mods?: InstallerModState[]
+    private _handle?: FileSystemDirectoryHandle
 
+    readonly progress = new InstallerProgress()
+    readonly logger = new Logger()
     readonly profile: Profile
-    mods?: InstallerModState[]
-    handle?: FileSystemDirectoryHandle
+
+    /** The current state of the installer. */
+    get state() {
+        return this._state
+    }
+
+    /** A list of mods available to the installer. */
+    get mods() {
+        return this._mods
+    }
+
+    /** The file system directory handle. */
+    get handle() {
+        return this._handle
+    }
 
     constructor(profile: Profile) {
         this.profile = profile
-        this.mods = profile.mods.map((mod) => new InstallerModState(mod))
+        this._mods = profile.mods.map((mod) => new InstallerModState(mod))
         makeAutoObservable(this, {
             logger: false,
             createDump: false,
         })
     }
 
+    /** Sets the current installer state. */
     setState(state: InstallerComponentState) {
-        this.state = state
+        this._state = state
     }
 
+    /** Sets the handler. */
     setHandle(handle: FileSystemDirectoryHandle) {
-        this.handle = handle
+        this._handle = handle
     }
 
+    /** Completes the installation process of the `profile`. */
     async install(): Promise<void> {
         this.logger.info("preparing to install")
         this.setState("installing")
@@ -118,7 +103,9 @@ export class Installer {
                 this.logger.error("failed to copy options", { error })
             }
 
-            this.progress.increment()
+            this.progress.incrementValue()
+
+            // Install the mod loader
             this.progress.setDisplay("Installing mod loader")
             if (this.profile.version.loader === "fabric") {
                 await installFabric(this)
@@ -126,14 +113,15 @@ export class Installer {
                 await installVanilla(this)
             }
 
-            this.progress.increment()
+            this.progress.incrementValue()
             const modsHandle = await instanceHandle.getDirectoryHandle("mods", {
                 create: true,
             })
 
             let installedModsCount = 0 // Initialize a counter for successfully installed mods
 
-            const installPromises = this.mods.map((mod, i) => {
+            // Create promises to download and correctly place each enabled mod
+            const installPromises = this.mods.map((mod) => {
                 if (!mod.include) return Promise.resolve()
 
                 this.logger.info("installing mod", { ...mod.mod })
@@ -172,7 +160,7 @@ export class Installer {
                         this.progress.setDisplay(
                             `Installing mods [${installedModsCount}/${modCount}]`,
                         )
-                        this.progress.increment()
+                        this.progress.incrementValue()
                     } catch (error) {
                         mod.setState("failed")
                         this.logger.error("unable to install mod", {
@@ -196,7 +184,7 @@ export class Installer {
             }
 
             this.logger.info("installing files")
-            this.progress.increment()
+            this.progress.incrementValue()
             this.progress.setDisplay("Installing files")
             if (this.profile.files) {
                 for (const [path, url] of Object.entries(this.profile.files)) {
@@ -215,9 +203,10 @@ export class Installer {
             }
 
             this.logger.info("creating launcher profile")
-            this.progress.increment()
+            this.progress.incrementValue()
             this.progress.setDisplay("Creating launcher profile")
 
+            // Create the launcher profile
             const serversNBT = createServersNBT(this.profile)
             const serversHandle = await instanceHandle.getFileHandle(
                 "servers.dat",
@@ -234,6 +223,7 @@ export class Installer {
                 await serversWritable.close()
             }
 
+            // Download a logo for the profile (or default to the Furnace)
             const logoBlob = await this.fetchWithRetry(this.profile.icon)
                 .then((res) => res.arrayBuffer())
                 .then(
@@ -243,6 +233,7 @@ export class Installer {
                 )
                 .catch(() => undefined)
 
+            // Adjust the launcher profile to include custom java args, logos, etc
             const profilesHandle = await this.handle.getFileHandle(
                 "launcher_profiles.json",
             )
@@ -258,7 +249,7 @@ export class Installer {
                 type: "custom",
                 javaArgs:
                     this.profile.javaArgs ??
-                    "-Xmx2G -XX:+UseZGC -XX:+ZGenerational",
+                    "-Xmx2G -XX:+UseZGC -XX:+ZGenerational", // default java args
             }
             const writable = await profilesHandle.createWritable()
             try {
@@ -268,7 +259,7 @@ export class Installer {
             }
 
             this.logger.info("installation complete")
-            this.progress.increment()
+            this.progress.incrementValue()
             this.progress.setDisplay("Installation complete")
 
             this.setState("installed")
@@ -278,6 +269,7 @@ export class Installer {
         }
     }
 
+    /** Downloads file from `url` and places at `path`. */
     async installFile(
         instanceHandle: FileSystemDirectoryHandle,
         path: string,
@@ -320,6 +312,7 @@ export class Installer {
         }
     }
 
+    /** Fetches data from `input`, allowing for retries if the requests fails. */
     async fetchWithRetry(
         input: RequestInfo | URL,
         init?: RequestInit,
@@ -343,6 +336,7 @@ export class Installer {
         }
     }
 
+    /** Creates a dump of information, used to debug failed installations. */
     createDump(): any {
         return {
             installer: {
@@ -361,25 +355,5 @@ export class Installer {
                 userAgent: navigator.userAgent,
             },
         }
-    }
-}
-
-export class InstallerModState {
-    readonly mod: ProfileMod
-    state: InstallerComponentState = "pending"
-    include: boolean
-
-    constructor(mod: ProfileMod) {
-        this.mod = mod
-        this.include = mod.option !== "optional"
-        makeAutoObservable(this)
-    }
-
-    setState(state: InstallerComponentState) {
-        this.state = state
-    }
-
-    toggle() {
-        this.include = !this.include
     }
 }

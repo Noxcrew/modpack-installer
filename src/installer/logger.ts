@@ -1,14 +1,18 @@
+/** The level of a log. */
 export type LogLevel = "info" | "warn" | "error"
 
+/** A log entry. */
 export interface LogEntry {
     readonly level: LogLevel
     readonly message: string
     readonly data: Record<string, any>
 }
 
+/** Handles the logging of data to the console. */
 export class Logger {
     readonly entries: LogEntry[] = []
 
+    /** Logs `message` at `level`. */
     log(level: LogLevel, message: string, data?: Record<string, any>) {
         try {
             if (data && data["error"] instanceof Error) {
@@ -33,18 +37,22 @@ export class Logger {
         } catch (_) {}
     }
 
+    /** Logs `message` as info. */
     info(message: string, data?: Record<string, any>) {
         this.log("info", message, data)
     }
 
+    /** Logs `message` as a warning. */
     warn(message: string, data?: Record<string, any>) {
         this.log("warn", message, data)
     }
 
+    /** Logs `message` as an error. */
     error(message: string, data?: Record<string, any>) {
         this.log("error", message, data)
     }
 
+    /** Returns the associated colour for the log `level`. */
     private static getColorForLevel(level: LogLevel): string {
         switch (level) {
             case "info":
