@@ -1,5 +1,5 @@
 <p align="center">
-    <h1 align="center">Modpack Loader</h1>
+    <h1 align="center">Modpack Installer</h1>
 </p>
 
 <p align="center">Download and install Minecraft profiles in one click.</p>
