@@ -38,6 +38,12 @@ export default observer(function InstallerPanel() {
                                 Minecraft Launcher for you.
                                 <br />
                                 <br />
+                                If you already have a profile for{" "}
+                                <b>{installer.profile.name}</b>, it will be
+                                updated while preserving your original settings
+                                where possible.
+                                <br />
+                                <br />
                                 <span className="text-red-400">
                                     Use the <b>Manual Install</b> option if you
                                     experience issues.

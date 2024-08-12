@@ -64,7 +64,7 @@ export default observer(function InstallerView() {
             <div className="grow" />
             <div
                 className={clsx(
-                    "w-full h-full min-h-[22rem] max-w-[54rem] max-h-[32rem] border-2 rounded-xl flex-row transition-colors duration-300 hidden md:flex my-4",
+                    "w-full h-full min-h-[22rem] max-w-[54rem] max-h-[40rem] border-2 rounded-xl flex-row transition-colors duration-300 hidden md:flex my-4",
                     isDragging ? "border-green-500" : "border-neutral-800",
                 )}
             >
