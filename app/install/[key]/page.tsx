@@ -4,7 +4,7 @@ import InstallerProvider from "@/src/components/InstallerProvider"
 import InstallerView from "@/src/components/InstallerView"
 import { getProfileByKey } from "@/src/profile.server"
 import { InstallPageProps } from "@/src/util/next"
-import { notFound } from "next/navigation"
+import { notFound, redirect } from "next/navigation"
 
 export function generateMetadata(
     props: InstallPageProps,
@@ -26,6 +26,10 @@ export default function Install(props: InstallPageProps) {
 
     if (!profile) {
         return notFound()
+    }
+
+    if (profile.forceManualInstallation) {
+        return redirect(`/install/${profile.key}/manual`)
     }
 
     return (

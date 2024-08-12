@@ -26,6 +26,8 @@ export interface Profile {
     readonly mods: ProfileMod[]
     /** Arbitrary files to include in the profile. */
     readonly files?: Record<string, string>
+    /** Forces the user to manually install the profile. */
+    readonly forceManualInstallation?: boolean
 }
 
 /** The version of Minecraft and the mod loader to use. */
