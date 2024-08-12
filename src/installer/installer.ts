@@ -207,7 +207,6 @@ export class Installer {
             this.progress.setDisplay("Creating launcher profile")
 
             // Create the launcher profile
-            const serversNBT = createServersNBT(this.profile)
             const serversHandle = await instanceHandle.getFileHandle(
                 "servers.dat",
                 {
@@ -217,6 +216,14 @@ export class Installer {
             const serversWritable = await serversHandle.createWritable({
                 keepExistingData: false,
             })
+            const serversFile = await serversHandle.getFile()
+            const serversBuffer = await serversFile.arrayBuffer()
+
+            const serversNBT = await createServersNBT(
+                this.profile,
+                Buffer.from(serversBuffer),
+            )
+
             try {
                 await serversWritable.write(serversNBT.buffer)
             } finally {

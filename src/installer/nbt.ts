@@ -1,75 +1,56 @@
 import { Buffer } from "buffer"
+import nbt from "prismarine-nbt"
 
 import type { Profile } from "../profile"
+import { attempt } from "../util/promise"
 
 /** Creates the `servers.dat` NBT file. */
-export const createServersNBT = (profile: Profile): Buffer => {
-    const size = computeServersNBTSize(profile)
-    const buffer = Buffer.alloc(size)
+export const createServersNBT = async (
+    profile: Profile,
+    serversDat: Buffer,
+): Promise<Buffer> => {
+    const userAddedServers = await getUserServers(profile, serversDat)
 
-    buffer.writeUInt8(0x0a, 0) // TAG_Compound
-    buffer.writeUInt16BE(0, 1) // Name size
-    buffer.writeUInt8(0x09, 3) // TAG_List
-    buffer.writeUInt16BE(7, 4) // Name size
-    buffer.write("servers", 6, 7, "utf-8")
-    buffer.writeUInt8(0x0a, 13) // TAG_Compound
-    buffer.writeInt32BE(profile.servers.length, 14) // TAG_Compound
+    const servers = nbt.comp({
+        servers: nbt.list(
+            nbt.comp([
+                // First add the servers in the profile at the top of the list
+                ...profile.servers.map((server) => {
+                    return {
+                        name: nbt.string(server.name),
+                        ip: nbt.string(server.host),
+                        hidden: nbt.byte(0),
+                    }
+                }),
+                // Then add any servers which the user has added previously (if the profile already exists locally)
+                ...(userAddedServers ?? []),
+            ]),
+        ),
+    })
 
-    let offset = 18
-    for (const server of profile.servers) {
-        buffer.writeUInt8(0x08, offset++) // TAG_String
-        buffer.writeUInt16BE(2, offset) // Name size
-        offset += 2
-        offset += buffer.write("ip", offset, 2, "utf-8")
-
-        const ipSize = computeUTF8Size(server.host)
-        buffer.writeUInt16BE(ipSize, offset)
-        offset += 2
-        offset += buffer.write(server.host, offset, ipSize, "utf-8")
-
-        buffer.writeUInt8(0x08, offset++) // TAG_String
-        buffer.writeUInt16BE(4, offset) // Name size
-        offset += 2
-        offset += buffer.write("name", offset, 4, "utf-8")
-
-        const nameSize = computeUTF8Size(server.name)
-        buffer.writeUInt16BE(nameSize, offset)
-        offset += 2
-        offset += buffer.write(server.name, offset, nameSize, "utf-8")
-
-        offset++ // TAG_End
-    }
-
-    return buffer
+    //@ts-ignore unknowable type error
+    return nbt.writeUncompressed(servers)
 }
 
-/** Computes the required size for the `servers.dat` file. */
-const computeServersNBTSize = (profile: Profile): number => {
-    let size = 19 // TAG_Compound (3) + TAG_List (15) + ... + TAG_End (1)
-    for (const server of profile.servers) {
-        size += 7 // TAG_String (3) + "ip" (2) + payload size (2)
-        size += computeUTF8Size(server.host)
-        size += 9 // TAG_String (3) + "name" (2) + payload size (2)
-        size += computeUTF8Size(server.name)
-        size += 1 // TAG_End
-    }
-    return size
-}
+/** Returns the servers the user has added which are not part of the `profile`. */
+export const getUserServers = async (profile: Profile, serversDat: Buffer) => {
+    // If the servers.dat file is empty we have nothing to do
+    if (serversDat.length === 0) return
 
-/** Computes the bytes required to store `str` in UTF8 format. */
-const computeUTF8Size = (str: string): number => {
-    let size = str.length
-    for (let i = str.length - 1; i >= 0; i--) {
-        const code = str.charCodeAt(i)
-        if (code > 0x7f && code <= 0x7ff) {
-            size++
-        } else if (code > 0x7ff && code <= 0xffff) {
-            size += 2
-        }
-        if (code >= 0xdc00 && code <= 0xdfff) {
-            // Trail surrogate
-            i--
-        }
-    }
-    return size
+    const hosts = profile.servers.map((server) => server.host)
+
+    const [current, err] = await attempt(nbt.parse(serversDat))
+
+    if (err) return
+
+    //@ts-ignore ignore type checking for large nbt structures
+    return current?.parsed.value.servers.value.value
+        .filter((server) => !hosts.includes(server.ip.value))
+        .map((server) => {
+            return {
+                name: nbt.string(server.name.value),
+                ip: nbt.string(server.ip.value),
+                hidden: nbt.byte(server.hidden.value),
+            }
+        })
 }
