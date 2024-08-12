@@ -108,6 +108,18 @@ export default observer(function InstallerPanel() {
                     }
                 />
             )}
+            {ui.stage === "up-to-date" && (
+                <CardLayout
+                    title="You're already up-to-date!"
+                    description={
+                        <>
+                            Your launcher profile is already up-to-date. You may
+                            now launch <b>{installer.profile.name}</b> from your
+                            Minecraft launcher.
+                        </>
+                    }
+                />
+            )}
         </div>
     )
 })

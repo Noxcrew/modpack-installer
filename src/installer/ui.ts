@@ -9,6 +9,7 @@ export type InstallerUIStage =
     | "fileaccess"
     | "install"
     | "complete"
+    | "up-to-date"
 
 /** Manages the lifecycle of the installation UI. */
 export class InstallerUI {
@@ -136,6 +137,8 @@ export class InstallerUI {
             await this.installer.install()
             if (this.installer.state === "installed") {
                 this.proceed()
+            } else if (this.installer.state === "up-to-date") {
+                this.setStage("up-to-date")
             } else {
                 this.setAlert("Installation failed. Try again?")
             }

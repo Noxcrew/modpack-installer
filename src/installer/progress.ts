@@ -6,6 +6,7 @@ export type InstallerComponentState =
     | "installing"
     | "installed"
     | "failed"
+    | "up-to-date"
 
 /** Stores and manages the progress of the profile installer. */
 export class InstallerProgress {
@@ -40,5 +41,10 @@ export class InstallerProgress {
     /** Increments the current step. */
     incrementValue() {
         this._value++
+    }
+
+    /** Forces the progress to the maximum possible value. */
+    forceComplete() {
+        this._value = this._max
     }
 }

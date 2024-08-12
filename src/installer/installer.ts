@@ -1,7 +1,9 @@
 import { makeAutoObservable } from "mobx"
 
 import type { Profile } from "../profile"
+import type { Version } from "./version"
 
+import hash from "object-hash"
 import { installFabric } from "./loader/fabric"
 import { installVanilla } from "./loader/vanilla"
 import { Logger } from "./logger"
@@ -68,6 +70,37 @@ export class Installer {
             const instanceHandle = await this.handle.getDirectoryHandle(id, {
                 create: true,
             })
+
+            // Check the version of the current profile
+            const profileHash = hash(this.profile)
+            this.logger.info(`profile hash found to be ${profileHash}`)
+
+            const versionHandle = await instanceHandle.getFileHandle(
+                "modpack-installer.json",
+                {
+                    create: true,
+                },
+            )
+            const versionFile = await versionHandle.getFile()
+            const versionBuffer = await versionFile.arrayBuffer()
+
+            try {
+                const version: Version = JSON.parse(
+                    new TextDecoder().decode(versionBuffer),
+                )
+
+                // If the version matches the profile hash, we don't need to do anything
+                if (profileHash === version.version) {
+                    this.setState("up-to-date")
+                    this.progress.forceComplete()
+                    this.logger.info("user already found to be up-to-date")
+                    return
+                }
+            } catch (_) {}
+
+            this.logger.info(
+                "version mismatch found, proceeding with installation",
+            )
 
             // Clean existing mods
             try {
@@ -263,6 +296,23 @@ export class Installer {
                 await writable.write(JSON.stringify(profiles))
             } finally {
                 await writable.close()
+            }
+
+            // Note down the profile's hash
+            const versionWritable = await versionHandle.createWritable({
+                keepExistingData: false,
+            })
+
+            const version: Version = {
+                version: profileHash,
+            }
+
+            try {
+                await versionWritable.write(
+                    Buffer.from(JSON.stringify(version)),
+                )
+            } finally {
+                await versionWritable.close()
             }
 
             this.logger.info("installation complete")

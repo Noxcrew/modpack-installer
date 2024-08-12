@@ -89,7 +89,7 @@ export default observer(function InstallerView() {
                         />
                     </div>
                 )}
-                {ui.stage === "complete" && (
+                {(ui.stage === "complete" || ui.stage === "up-to-date") && (
                     <div className="grow p-20 m-auto">
                         <DoneIllustration />
                     </div>
