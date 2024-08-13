@@ -1,7 +1,7 @@
-import { makeAutoObservable } from "mobx"
+import { makeAutoObservable, runInAction } from "mobx"
 
 import type { Profile } from "../profile"
-import type { Version } from "./version"
+import type { Config } from "./config"
 
 import hash from "object-hash"
 import { installFabric } from "./loader/fabric"
@@ -85,16 +85,33 @@ export class Installer {
             const versionBuffer = await versionFile.arrayBuffer()
 
             try {
-                const version: Version = JSON.parse(
+                const config: Config = JSON.parse(
                     new TextDecoder().decode(versionBuffer),
                 )
 
                 // If the version matches the profile hash, we don't need to do anything
-                if (profileHash === version.version) {
+                if (profileHash === config.version) {
                     this.setState("up-to-date")
                     this.progress.forceComplete()
                     this.logger.info("user already found to be up-to-date")
                     return
+                }
+
+                // Enable all the mods which the user toggled on last time
+                const preEnabledMods = config.optionalMods
+                    .filter((mod) => mod.enabled)
+                    .map((mod) => mod.path)
+
+                for (const mod of this.mods) {
+                    if (preEnabledMods.includes(mod.mod.path)) {
+                        runInAction(() => {
+                            mod.include = true
+                        })
+
+                        this.logger.info(
+                            `enabled ${mod.mod.path} as it was toggled in a previous selection`,
+                        )
+                    }
                 }
             } catch (_) {}
 
@@ -303,8 +320,16 @@ export class Installer {
                 keepExistingData: false,
             })
 
-            const version: Version = {
+            const version: Config = {
                 version: profileHash,
+                optionalMods: this.mods
+                    .filter((mod) => mod.mod.option === "optional")
+                    .map((mod) => {
+                        return {
+                            path: mod.mod.path,
+                            enabled: mod.include,
+                        }
+                    }),
             }
 
             try {

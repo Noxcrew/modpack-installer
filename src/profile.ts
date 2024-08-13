@@ -59,7 +59,7 @@ export interface ProfileMod {
     readonly name: string
     /** A description of the mod to show in a tooltip, if included.. */
     readonly description?: string
-    /** Where to store the mod in the profile. */
+    /** Where to store the mod in the profile. Used as a pseudo-key to identify the mod. */
     readonly path: string
     /** A URL indicating where to download the mod from. */
     readonly url: string
