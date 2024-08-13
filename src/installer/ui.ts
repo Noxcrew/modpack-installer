@@ -10,6 +10,7 @@ export type InstallerUIStage =
     | "install"
     | "complete"
     | "up-to-date"
+    | "fresh"
 
 /** Manages the lifecycle of the installation UI. */
 export class InstallerUI {
@@ -47,8 +48,13 @@ export class InstallerUI {
     /** Sets the current installation stage. */
     setStage(stage: InstallerUIStage, clearAlert = true) {
         this._stage = stage
+
         if (clearAlert) {
             this.setAlert(undefined)
+        }
+
+        if (stage === "fresh") {
+            this.installer.setFresh(true)
         }
     }
 
@@ -76,6 +82,9 @@ export class InstallerUI {
     proceed(clearAlert = true) {
         switch (this.stage) {
             case "onboarding":
+                this._stage = "fileaccess"
+                break
+            case "fresh":
                 this._stage = "fileaccess"
                 break
             case "fileaccess":
@@ -139,6 +148,9 @@ export class InstallerUI {
                 this.proceed()
             } else if (this.installer.state === "up-to-date") {
                 this.setStage("up-to-date")
+
+                // Reset the installer's progress in case the user reinstalls fresh mods
+                this.installer.progress.reset()
             } else {
                 this.setAlert("Installation failed. Try again?")
             }

@@ -47,4 +47,9 @@ export class InstallerProgress {
     forceComplete() {
         this._value = this._max
     }
+
+    /** Resets the current progress of the installer. */
+    reset() {
+        this._value = 0
+    }
 }

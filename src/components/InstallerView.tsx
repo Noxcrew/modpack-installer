@@ -75,7 +75,9 @@ export default observer(function InstallerView() {
                     </div>
                 )}
                 {ui.isCompatible !== false &&
-                    (ui.stage === "onboarding" || ui.stage === "install") && (
+                    (ui.stage === "onboarding" ||
+                        ui.stage === "install" ||
+                        ui.stage === "fresh") && (
                         <ModList progress={ui.stage === "install"} />
                     )}
                 {ui.stage === "fileaccess" && (

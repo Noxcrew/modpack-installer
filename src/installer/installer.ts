@@ -16,6 +16,7 @@ export class Installer {
     private _state: InstallerComponentState = "pending"
     private _mods?: InstallerModState[]
     private _handle?: FileSystemDirectoryHandle
+    private _fresh: boolean = false
 
     readonly progress = new InstallerProgress()
     readonly logger = new Logger()
@@ -36,6 +37,11 @@ export class Installer {
         return this._handle
     }
 
+    /** Whether to freshly install the mods in the profile based on updated selections. */
+    get fresh() {
+        return this._fresh
+    }
+
     constructor(profile: Profile) {
         this.profile = profile
         this._mods = profile.mods.map((mod) => new InstallerModState(mod))
@@ -53,6 +59,11 @@ export class Installer {
     /** Sets the handler. */
     setHandle(handle: FileSystemDirectoryHandle) {
         this._handle = handle
+    }
+
+    /** Modifies the ability to freshly install mods regardless of local status. */
+    setFresh(fresh: boolean) {
+        this._fresh = fresh
     }
 
     /** Completes the installation process of the `profile`. */
@@ -89,29 +100,33 @@ export class Installer {
                     new TextDecoder().decode(versionBuffer),
                 )
 
+                // Enable all the mods which the user toggled on last time unless we're looking for a fresh install
+                // Do this before a version check so the user can see their selected mods should they do a fresh install
+                if (!this.fresh) {
+                    const preEnabledMods = config.optionalMods
+                        .filter((mod) => mod.enabled)
+                        .map((mod) => mod.path)
+
+                    for (const mod of this.mods) {
+                        if (preEnabledMods.includes(mod.mod.path)) {
+                            runInAction(() => {
+                                mod.include = true
+                            })
+
+                            this.logger.info(
+                                `enabled ${mod.mod.path} as it was toggled in a previous selection`,
+                            )
+                        }
+                    }
+                }
+
                 // If the version matches the profile hash, we don't need to do anything
-                if (profileHash === config.version) {
+                // Ignore versioning if we're freshly installing mods
+                if (profileHash === config.version && !this.fresh) {
                     this.setState("up-to-date")
                     this.progress.forceComplete()
                     this.logger.info("user already found to be up-to-date")
                     return
-                }
-
-                // Enable all the mods which the user toggled on last time
-                const preEnabledMods = config.optionalMods
-                    .filter((mod) => mod.enabled)
-                    .map((mod) => mod.path)
-
-                for (const mod of this.mods) {
-                    if (preEnabledMods.includes(mod.mod.path)) {
-                        runInAction(() => {
-                            mod.include = true
-                        })
-
-                        this.logger.info(
-                            `enabled ${mod.mod.path} as it was toggled in a previous selection`,
-                        )
-                    }
                 }
             } catch (_) {}
 
