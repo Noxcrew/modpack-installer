@@ -65,7 +65,7 @@ export const ModListItem = observer((props: Props) => {
             {progress && (
                 <div
                     className={clsx(
-                        "px-2 py-1 w-24 text-center text-sm font-semibold rounded-lg transition duration-500",
+                        "px-2 py-1 w-24 text-center text-sm font-semibold rounded-lg transition duration-500 shrink-0",
                         mapStateStyle(),
                     )}
                 >
