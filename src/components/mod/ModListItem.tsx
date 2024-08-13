@@ -1,6 +1,5 @@
 "use client"
 
-import InformationCircleIcon from "@/assets/icon/information_circle.svg"
 import { InstallerModState } from "@/src/installer/state"
 import clsx from "clsx"
 import { observer } from "mobx-react-lite"
@@ -51,17 +50,11 @@ export const ModListItem = observer((props: Props) => {
 
     return (
         <li className="px-4 py-3 flex flex-row items-center">
-            <h3 className="text-neutral-200 grow relative group">
-                {mod.mod.name}
-                {mod.mod.description && (
-                    <>
-                        <div className="absolute hidden group-hover:block text-xs font-medium bg-neutral-700/80 z-20 rounded-md px-2 py-1 transition-all">
-                            {mod.mod.description}
-                        </div>
-                        <InformationCircleIcon className="ml-2 w-3 h-3 text-neutral-400 inline" />
-                    </>
-                )}
-            </h3>
+            <div className="text-neutral-200 grow relative group">
+                <h3>{mod.mod.name}</h3>
+                <p className="text-xs">{mod.mod.description}</p>
+            </div>
+
             {!progress && (
                 <Switch
                     value={mod.include}
