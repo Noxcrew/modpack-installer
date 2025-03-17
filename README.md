@@ -6,6 +6,9 @@
 
 <p align="center">Originally made by <a href="https://twitter.com/cubxity">@cubxity</a> and <a href="https://twitter.com/vini2003_dev">@vini2003_dev</a>.</p>
 
+## Deprecation Notice
+Due to a change in Chromium this installer is no longer functional and will no longer receive updates. All Chromium based browsers now block making edits to user directories so the site can no longer access the `.minecraft` folder. This project has been superseded by [Launchy](https://github.com/Noxcrew/launchy) which is our new approach to shipping modpacks.
+
 ## Usage
 
 You can try it out for yourself using our [publicly-available profile](https://modpack-installer.vercel.app/install/6c76b98d1fe1a8d56ddf89dab61c35aff0b4cc4bc914075479f24a87e5604246).
